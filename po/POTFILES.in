@@ -1,0 +1,14 @@
+# List of source files which contain translatable strings.
+src/Board.cc
+src/Card.cc
+src/Cmdline.cc
+src/Logic.cc
+src/Menu.cc
+src/Stack.cc
+src/UserInterface.cc
+src/main.cc
+
+# List of XML data files which contain translatable strings.
+data/ui/main-window.ui
+data/ui/preferences.ui
+data/ui/scores.ui

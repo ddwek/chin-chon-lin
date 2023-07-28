@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2023 Daniel Dwek
+
+  This file is part of chin-chon-lin.
+
+  chin-chon-lin is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  chin-chon-lin is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with chin-chon-lin.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<schemalist>
+  <schema path="/org/gtk/chin-chon-lin/" id="org.gtk.chin-chon-lin">
+    <key name="your-name" type="s">
+      <default>"Human"</default>
+      <summary>Your name</summary>
+      <description>You can place here something different than just the default name.</description>
+    </key>
+    <key name="total-points" type="i">
+      <default>100</default>
+      <summary>Total points</summary>
+      <description>Maximum scores to be reached for any player causes the end of the game.</description>
+    </key>
+    <key name="flex-end" type="i">
+      <default>0</default>
+      <summary>Flexible ending</summary>
+      <description>If 1, players can finish the rounds with two combos of three cards each.</description>
+    </key>
+    <key name="language" type="s">
+      <default>"English (US)"</default>
+      <summary>Language</summary>
+      <description>Choose the language which fits your comfort the most.</description>
+    </key>
+    <key name="deck-pixbuf" type="s">
+      <default>"ar"</default>
+      <summary>Deck image</summary>
+      <description>Select your favorite flag to be used as the deck image.</description>
+    </key>
+  </schema>
+</schemalist>

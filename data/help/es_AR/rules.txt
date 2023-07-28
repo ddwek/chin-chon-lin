@@ -1,0 +1,51 @@
+<u><b>chin-chon-lin</b></u>
+
+<b>chin-chon-lin</b> es un juego de cartas para GNU/Linux cuyo
+principal objetivo es agrupar cartas y hacer combos. Vos podés agrupar
+tus cartas ya sea tanto por palo o por número. La primera de esas
+posibles combinaciones es internamente conocida como "escalera",
+mientras que la última es simplemente conocida como "grupo".
+
+Cuando vos corras el juego por primera vez, podrás ver como el mazo
+distribuye sus cartas, que son siete cartas para cada uno de los
+cuatro jugadores. Luego, y cada vez que el tablero indique que es tu
+turno para jugar, tendrás que elegir el origen desde donde vos levantás
+una carta. Puede ser el mazo (el montón de cartas ubicado en el centro
+y a la izquierda de la ventana) o la pila de cartas ya jugadas, al Este
+del mazo. A continuación, vos tenés que deshacerte de una de tus cartas,
+siendo lo más común aquella que vos consideres no relevante.
+
+Una vez hecho éso, vos tenés que esperar que los otros jugadores hagan
+lo mismo con sus cartas. Repetí tus adquisiciones y descartes una y otra
+vez hasta que hayas hecho la mayor cantidad posible de combos de
+tres / cuatro cartas cada uno y terminá la ronda actual presionando el
+botón secundario del mouse (normalmente, el derecho). Finalmente, vos
+verás los puntos computados para los cuatro jugadores, lo que es
+descrito en la siguiente sección.
+
+<u><b>Computando puntos</b></u>
+
+Al final de cada ronda, un mensaje de diálogo conteniendo info sobre
+los puntos de la ronda y los totales de cada jugador es mostrado en
+la pantalla. Como podés ver en el código fuente, el algoritmo para
+calcular los puntajes es realmente sencillo. Primero que nada,
+sumamos el número de cada carta y entonces le restamos tanto los
+números de combos por grupos y escaleras también.
+Fijate que el palo de cada carta es insignificante.
+
+<u><b>Cuándo termina el juego?</b></u>
+
+Después de cada ronda finalizada, vos podés ver la tabla de puntajes
+y comparar tus puntos totales con los de tus adversarios. A pesar que
+el Límite Total a alcanzar es configurable, si un jugador excede tal
+límite el juego termina y el jugador con el menor "Puntaje Total"
+gana el partido.
+
+<u><b>Qué más debería saber para empezar a jugar este juego?</b></u>
+
+El consejo más importante a tener en cuenta es tratar de levantar y
+hacer combos con cartas de baja numeración. De esa manera, si alguien
+termina la ronda antes que vos, la cantidad a sumar en el campo
+"Esta Ronda" de la "Tabla de Puntajes" será la menor.
+
+<i><b>Que lo disfrutes!!!</b></i>

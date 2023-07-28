@@ -1,0 +1,13 @@
+* Fix making combos with shared / common card, when you have the first combo
+  of type "STAIR" and the second one of type "GROUP" or vice versa. You can
+  test it by typing the following on the cmdline:
+  chin-chon-lin --test-deck input-4-common-card.txt
+
+* Add AC_CHECK_PROG autoconf's directive for testing existence of
+  'glib-compile-resources'. However, you can still compile resource files
+  by means of the traditional way.
+
+* Add XML support for bugs reporting and replaying bogus matches in order to
+  fix them easier.
+
+* Networking is scheduled for v2.0+.

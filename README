@@ -1,0 +1,50 @@
+chin-chon-lin
+=============
+
+chin-chon-lin is a game of cards for GNU/Linux whose main goal is group
+cards and make combos. You can group your cards by either suit or number.
+The former of those possible combinations is internally known as "stairs",
+where as the latter is simply known as "groups".
+
+When you run the game for the first time, you will be able to see how the
+deck distributes its cards, which are seven cards for each of the four
+players. Next, and every time the board's turn indicates that is your turn
+to play, you will have to choose the source where you get one card from.
+It can be the deck (the heap of cards stacked at left-center of the window)
+or the stack of played cards, east of the deck. Then, you must to get rid
+of one of your cards, most likely that you consider it useless.
+
+Once done, you must to wait for the other players do the same with their
+cards. Repeat your acquisitions and discards over and over again until you
+have made the more combos of three / four cards each as you can and end the
+current round by pressing the secondary mouse button (usually, the right
+one). Finally, you will see the table of scores, with the scores computed
+for the four players, which is described in the next section.
+
+Computing scores
+================
+
+At the end of each round, a message dialog containing info about the round
+scores and total scores for the players is shown on screen. As you can take
+a look the source code, the algorithm for scores calculating is really
+straightforward. First of all, we add the number of each card and then we
+subtract it both groups and stairs combos based on their numbers as well.
+Note that suit of each card is meaningless.
+
+When does the game end?
+=======================
+
+After every round finished, you can see the table of scores and compare
+your total scores with your adversaries. Despite of the Total Limit to
+reach is configurable, whether one player exceeds such a limit the game
+is over and the player with the least "Total Score" wins the match.
+
+What else should I know to start playing this game?
+===================================================
+
+The most important hint to keep in mind is just try to collect and make
+combos with low-numbered cards. That way, if someone ends the round before
+than you, the amount to sum in the field "This Round" of the "Table of
+Scores" will be the least.
+
+Hope you enjoy!!!

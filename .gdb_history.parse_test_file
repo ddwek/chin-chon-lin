@@ -1,0 +1,7 @@
+display i
+display buf
+display str
+display str[i]
+display pos
+display suit
+display number

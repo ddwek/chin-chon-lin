@@ -1,0 +1,34 @@
+Installation
+------------
+
+Make sure you can run the following commands on a terminal before doing anything else:
+
+	username@host: dir $ pkg-config --libs gtk+-3.0
+	username@host: dir $ pkg-config --libs librsvg-2.0
+
+Those lines should be enough to query your local system libraries needed for
+compile this game. In other words, you will need gtk+-3.0 and librsvg-2.0 installed
+and running okay on your machine.
+
+Having said that, to install using git and the GNU Build System method, just open
+a terminal and type the following commands:
+
+	username@host: dir $ git clone https://github.com/ddwek/chin-chon-lin chin-chon-lin
+	username@host: dir $ cd chin-chon-lin
+	username@host: chin-chon-lin $ ./configure CXXFLAGS="-Wall" --prefix=/usr/local
+	username@host: chin-chon-lin $ make
+	[ become superuser if needed ]
+	username@host: chin-chon-lin $ make install-strip
+
+Note that we have to modify the CXXFLAGS environment variable to "-Wall" in order to
+produce code without any kind of warnings.
+
+Last but not least, if you want to add support for localization, you must to do so
+at configure-time; that is, after changing to the source directory type the following
+line:
+
+	username@host: chin-chon-lin $ ./configure CXXFLAGS="-Wall" --prefix=/usr/local --enable-nls=yes
+
+Note that the final Makefile produced by 'configure' under "po/" subdirectory adds the
+"all-yes" target for compilation, not "all-1" target, so that specifying "--enable-nls=1"
+on the command line will lead to error.

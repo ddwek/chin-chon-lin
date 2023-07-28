@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gtk/chin-chon-lin">
+    <file preprocess="xml-stripblanks">main-window.ui</file>
+    <file preprocess="xml-stripblanks">preferences.ui</file>
+    <file preprocess="xml-stripblanks">scores.ui</file>
+    <file>deck-ar.thumbnail.png</file>
+    <file>deck-es.thumbnail.png</file>
+    <file>deck-gb.thumbnail.png</file>
+    <file>deck-us.thumbnail.png</file>
+  </gresource>
+</gresources>

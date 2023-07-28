@@ -1,0 +1,6 @@
+SUBDIRS = src data po
+dist_doc_DATA = AUTHORS ChangeLog COPYING INSTALL README TODO
+
+ACLOCAL_AMFLAGS = -I m4
+
+EXTRA_DIST = m4/ChangeLog

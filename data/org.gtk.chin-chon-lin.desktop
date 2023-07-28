@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=chin-chon-lin
+Comment=Make combos with your cards and defeat your adversaries
+TryExec=chin-chon-lin
+Exec=chin-chon-lin
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=chin-chon-lin
+Categories=GTK;Game;2DGraphics;VectorGraphics
+X-Desktop-File-Install-Version=0.26

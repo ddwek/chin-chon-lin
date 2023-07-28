@@ -1,0 +1,10 @@
+display xpos
+display xc
+display obj_x
+display xslide[selected]
+display xpos - xc - (obj_x + xslide[selected])
+display ypos
+display yc
+display obj_y
+display yslide[selected]
+display ypos - yc - (obj_y + yslide[selected])

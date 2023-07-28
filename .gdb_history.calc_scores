@@ -1,0 +1,5 @@
+display i
+display points
+display group_pts
+display stair_pts
+display *card_ptr

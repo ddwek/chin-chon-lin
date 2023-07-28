@@ -1,0 +1,11 @@
+display i
+display j
+display number
+display suit
+display *group
+display *stair
+display group_cards_set
+display prev
+display *iter / 12
+display *iter % 12
+display next

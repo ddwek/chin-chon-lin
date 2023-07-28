@@ -1,0 +1,16 @@
+display i
+display j
+display start
+display length
+display card_number 
+display *iter
+display *next
+display *stair
+display last[0]
+display last[1]
+display last[2]
+display last[3]
+display last[4]
+display last[5]
+display last[6]
+display last[7]

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gtk/chin-chon-lin">
+    <file>rules.txt</file>
+    <file>chin-chon-lin_screenshot.png</file>
+    <file>chin-chon-lin_logo.png</file>
+  </gresource>
+</gresources>

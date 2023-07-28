@@ -1,0 +1,12 @@
+display i
+display j
+display n
+display last
+display length
+display end1
+display end2
+display start
+display *stair
+display *group
+display my_cards
+display *my_cards_ptr
