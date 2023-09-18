@@ -2,7 +2,7 @@ display i
 display j
 display start
 display length
-display card_number 
+display card_number
 display *iter
 display *next
 display *stair

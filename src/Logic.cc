@@ -59,7 +59,7 @@ public:
 
 	std::set<struct card_st> determine_missing_cards (int nplayer);
 	int choose_source ();
-	void get_sub_stair (stair_t *stair, int *io_start, int *ret_length);
+	bool get_sub_stair (stair_t *stair, int *io_start, int *ret_length);
 	bool check_extra_cards_for_stair (stair_t *stair, int *last, int n_extra, int start);
 	void get_next_end_for_stair (stair_t *stair, int suit, int *end1, int *end2);
 	int get_distance_for_stair (int suit, int end1, int end2, int *last, bool reset);
@@ -201,13 +201,16 @@ int Logic::choose_source ()
 	return source;
 }
 
-void Logic::get_sub_stair (stair_t *stair, int *io_start, int *ret_length)
+bool Logic::get_sub_stair (stair_t *stair, int *io_start, int *ret_length)
 {
 	int i, start = 0, length = 0;
 	bool set = false;
 
 	if (!stair || !io_start || !ret_length)
-		return;
+		return false;
+
+	while (stair->number[*io_start] == -1)
+		(*io_start)++;
 
 	for (i = *io_start; i < 12; i++) {
 		if (i + 1 < 12 && stair->number[i + 1] - stair->number[i] == 1) {
@@ -224,14 +227,17 @@ void Logic::get_sub_stair (stair_t *stair, int *io_start, int *ret_length)
 			} else {
 				*io_start = start;
 				*ret_length = length;
-				return;
+				return true;
 			}
 		}
 	}
+
+	return false;
 }
 
 bool Logic::check_extra_cards_for_stair (stair_t *stair, int *last, int n_extra, int start)
 {
+	bool ret = false;
 	int i, j, length = 0;
 	std::list<int> card_number;
 	std::list<int>::const_iterator iter, next;
@@ -239,26 +245,36 @@ bool Logic::check_extra_cards_for_stair (stair_t *stair, int *last, int n_extra,
 	if (!stair || !last)
 		return false;
 
-	if (n_extra > 5)
-		start = 0;
+	for (i = start ? start - 1 : 0; i < 11; i++) {
+		if (stair->number[i] != -1 && stair->number[i + 1] != -1) {
+			start = i;
+			break;
+		}
+	}
 
-	for (i = start; i < 12; i++)
+	for (i = start; i < 12; i++) {
 		if (stair->number[i] != -1)
-			card_number.push_back (stair->number[i]);
+			length++;
 		else
 			break;
+	}
+
+	for (i = start; i < start + length; i++)
+		card_number.push_back (stair->number[i]);
 
 	for (i = 0, iter = card_number.cbegin (); iter != card_number.cend (); iter++, i++) {
-		get_sub_stair (stair, &start, &length);
-		if (length > 2) {
-			for (j = start; j < start + length + 1; j++) {
-				if (n_extra > 5 && card_number.size () == (long unsigned) n_extra && stair->number[j] != -1)
-					last[j] = j + 1;
-				if (stair->number[j] == -1)
-					length--;
+		for (j = start; j < start + length; j++) {
+			if (card_number.size () == (long unsigned) n_extra && stair->number[j] != -1) {
+				last[j - start] = j + 1;
+				ret = true;
 			}
-			if (length > n_extra - 2)
-				return true;
+		}
+
+		if (ret) {
+			while (start != -1 && length != -1 && start < 12)
+				start = start + length;
+
+			return true;
 		}
 	}
 
@@ -400,7 +416,7 @@ void Logic::get_game_combos ()
 {
 	int i, j, n, last[8], length = 0, end1 = -1, end2 = -1, start = 0;
 	struct card_st my_cards = { 0 }, *my_cards_ptr = nullptr;
-	bool reset = true;
+	bool reset = true, first_exec = true;
 	stair_t *stair = nullptr;
 	group_t *group = nullptr;
 	Player& p = player[board.get_turn ()];
@@ -408,6 +424,7 @@ void Logic::get_game_combos ()
 	std::cout << _("Player #") << board.get_turn () << ":" << std::endl;
 	p.clear (0);
 	p.clear (1);
+
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 8; j++)
 			last[j] = -1;
@@ -415,6 +432,7 @@ void Logic::get_game_combos ()
 		stair = get_existing_cards_for_stair (p.get_id (), i);
 		if (stair) {
 			do {
+sub_stair:
 				get_next_end_for_stair (stair, i, &end1, &end2);
 				if (end2 == -1)
 					break;
@@ -427,10 +445,13 @@ void Logic::get_game_combos ()
 					}
 
 					if (length > 2) {
+						start = first_exec ? 0 : start;
 						if (check_extra_cards_for_stair (stair, last, 7, start))
 							length = 7;
 						else if (check_extra_cards_for_stair (stair, last, 6, start))
 							length = 6;
+						else if (check_extra_cards_for_stair (stair, last, 5, start))
+							length = 4;
 						else if (check_extra_cards_for_stair (stair, last, 4, start))
 							length = 4;
 						else if (check_extra_cards_for_stair (stair, last, 3, start))
@@ -444,7 +465,7 @@ void Logic::get_game_combos ()
 								my_cards.cnt = 0;
 								p.set_current_group (&my_cards, TYPE_STAIR, length);
 								n = p.get_current_group ();
-								p.set_combo_card (n, &my_cards);
+								p.set_combo_card (n, &my_cards, false);
 								p.set_combo_type (n, TYPE_STAIR);
 								p.set_combo_length (n, length);
 							} else {
@@ -461,10 +482,23 @@ void Logic::get_game_combos ()
 							std::cout << "\033[01;33m" << _("Suit = ") << my_cards_ptr->suit <<
 								_(", Number = ") << my_cards_ptr->number << "\033[00m" << std::endl;
 						}
-						if (length > 3) {
-							p.set_current_group (&my_cards, TYPE_STAIR, length);
-							goto next_stair;
+
+						p.set_current_group (&my_cards, TYPE_STAIR, length);
+						if (first_exec) {
+							end1 = -1;
+							end2 = -1;
+							length = 0;
+							start = 0;
+							reset = true;
+							first_exec = false;
+
+							if (p.get_combo_length (0) == 7)
+								return;
+
+							goto sub_stair;
 						}
+
+						goto next_stair;
 					}
 
 					if (start == 0)
@@ -486,6 +520,7 @@ next_stair:
 			length = 0;
 			start = 0;
 			reset = true;
+			first_exec = true;
 		}
 	}
 
@@ -494,6 +529,7 @@ next_stair:
 		if (group && group->length > 2) {
 			for (j = 0; j < 4; j++) {
 				if (group->suit[j] != -1) {
+					my_cards.idx = j;
 					my_cards.suit = j;
 					my_cards.number = i;
 					my_cards.cnt = 0;
@@ -503,7 +539,7 @@ next_stair:
 						p.clear (n);
 					p.set_combo_type (n, TYPE_GROUP);
 					p.set_combo_length (n, group->length);
-					p.set_combo_card (n, &my_cards);
+					p.set_combo_card (n, &my_cards, false);
 				}
 			}
 
@@ -524,45 +560,34 @@ next_stair:
 
 void Logic::rearrange_common_cards ()
 {
-	int i, j, n;
+	int i, j, n, max_length;
 	Player& p = player[board.get_turn ()];
-	struct card_st *group_card = nullptr, *stair_card = nullptr, new_card = { 0 };
+	struct card_st new_card = { 0 };
 	game_combo_t *g_combo = nullptr;
 
 	if (p.get_combo_type (0) == TYPE_STAIR && p.get_combo_type (1) == TYPE_GROUP) {
-		for (i = 0; i < p.get_combo_length (1); i++) {
-			group_card = p.get_combo_card (1, i);
-			for (j = 0; j < p.get_combo_length (0); j++) {
-				stair_card = p.get_combo_card (0, j);
-				if (group_card->suit == stair_card->suit && group_card->number == stair_card->number) {
-					g_combo = p.get_game_combo (0);
-					p.set_combo_type (0, TYPE_STAIR);
-					p.set_combo_length (0, g_combo->length - 1);
-					for (n = 0; n < g_combo->length; n++) {
-						new_card.idx = n;
-						new_card.suit = g_combo->cards[n].suit;
-						new_card.number = g_combo->cards[n].number;
-						new_card.cnt = 0;
-						p.set_combo_card (0, &new_card);
-					}
-				}
-			}
-		}
-	} else if (p.get_combo_type (0) == TYPE_GROUP && p.get_combo_type (1) == TYPE_STAIR) {
 		for (i = 0; i < p.get_combo_length (0); i++) {
-			group_card = p.get_combo_card (0, i);
 			for (j = 0; j < p.get_combo_length (1); j++) {
-				stair_card = p.get_combo_card (1, j);
-				if (group_card->suit == stair_card->suit && group_card->number == stair_card->number) {
-					g_combo = p.get_game_combo (1);
-					p.set_combo_type (1, TYPE_STAIR);
-					p.set_combo_length (1, g_combo->length - 1);
+				if (p.get_combo_card(0, i)->suit == p.get_combo_card(1, j)->suit &&
+				    p.get_combo_card(0, i)->number == p.get_combo_card(1, j)->number) {
+					if (p.get_combo_length (0) > p.get_combo_length (1))
+						max_length = 0;
+					else
+						max_length = 1;
+
+					g_combo = p.get_game_combo (max_length);
+					p.set_combo_length (max_length, g_combo->length - 1);
 					for (n = 0; n < g_combo->length; n++) {
-						new_card.idx = n;
-						new_card.suit = g_combo->cards[n].suit;
-						new_card.number = g_combo->cards[n].number;
-						new_card.cnt = 0;
-						p.set_combo_card (1, &new_card);
+						if (g_combo->cards[n].suit == p.get_combo_card(0, i)->suit &&
+						    g_combo->cards[n].number == p.get_combo_card(0, i)->number) {
+							new_card.idx = n;
+							new_card.cnt = 0;
+							if (n == g_combo->length - 1)
+								n++;
+							new_card.suit = g_combo->cards[n].suit;
+							new_card.number = g_combo->cards[n].number;
+							p.set_combo_card (max_length, &new_card, true);
+						}
 					}
 				}
 			}
@@ -585,6 +610,7 @@ int Logic::advise_to_finish ()
 			for (int i = 0; i < p.get_game_combo(0)->length; i++)
 				std::cout << _("suit = ") << p.get_combo_card(0, i)->suit <<
 					_(", number = ") << p.get_combo_card(0, i)->number << std::endl;
+			std::cout << std::endl;
 			for (int i = 0; i < p.get_game_combo(1)->length; i++)
 				std::cout << _("suit = ") << p.get_combo_card(1, i)->suit <<
 					_(", number = ") << p.get_combo_card(1, i)->number << std::endl;
@@ -628,8 +654,14 @@ void Logic::calc_scores (int nplayer)
 	}
 
 	if (!p.points_set ()) {
-		p.set_round_pts (points - group_pts - stair_pts);
-		p.set_total_pts (p.get_total_pts () + p.get_round_pts ());
-		p.set_points (true);
+		if (p.get_game_combo(0)->length == 7) {
+			p.set_round_pts (0);
+			p.set_total_pts (p.get_total_pts ());
+			p.set_points (true);
+		} else {
+			p.set_round_pts (points - group_pts - stair_pts);
+			p.set_total_pts (p.get_total_pts () + p.get_round_pts ());
+			p.set_points (true);
+		}
 	}
 }

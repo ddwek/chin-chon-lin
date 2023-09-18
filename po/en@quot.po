@@ -28,7 +28,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: chin-chon-lin 0.2.0\n"
-"Report-Msgid-Bugs-To: todovirtual15@gmail.com\n"
+"Report-Msgid-Bugs-To: dwekdaniel@gmail.com\n"
 "POT-Creation-Date: 2023-07-26 05:14-0300\n"
 "PO-Revision-Date: 2023-07-26 05:14-0300\n"
 "Last-Translator: Automatically generated\n"

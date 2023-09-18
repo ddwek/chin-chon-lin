@@ -10,3 +10,6 @@ display *stair
 display *group
 display my_cards
 display *my_cards_ptr
+display first_exec
+display *p.get_game_combo (0)
+display *p.get_game_combo (1)

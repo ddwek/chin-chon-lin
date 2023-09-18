@@ -1,5 +1,4 @@
-display i
-display found 
-display game_combo[0]
-display *c
 display current_group 
+display game_combo[0]
+display game_combo[1]
+display *c

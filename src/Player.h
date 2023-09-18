@@ -73,7 +73,7 @@ public:
 	int get_combo_length (int n) const;
 	struct card_st *get_combo_card (int ncombo, int ncard);
 	game_combo_t *get_game_combo (int ngroup);
-	std::multiset<Card>& get_cards_multiset ();
+	std::set<Card>& get_cards_set ();
 	int get_round_pts () const;
 	int get_total_pts () const;
 	bool points_set () const;
@@ -93,7 +93,7 @@ public:
 	void set_current_group (struct card_st *c, game_type_t type, int length);
 	void set_combo_type (int n, game_type_t type);
 	void set_combo_length (int n, int length);
-	void set_combo_card (int n, struct card_st *card);
+	void set_combo_card (int n, struct card_st *card, bool replace);
 	void set_round_pts (int round_pts);
 	void set_total_pts (int total_pts);
 	void set_points (bool are_points_set);
@@ -118,7 +118,7 @@ private:
 	int id;
 	std::string name;
 	std::list<Card> cards;
-	std::multiset<Card> cards_multiset;
+	std::set<Card> cards_set;
 	game_combo_t game_combos[2];
 	int current_group;
 	double sep;

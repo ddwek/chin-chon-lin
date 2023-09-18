@@ -80,7 +80,7 @@ public:
 	int get_combo_length (int n) const;
 	struct card_st *get_combo_card (int ncombo, int ncard);
 	game_combo_t *get_game_combo (int ngroup);
-	std::multiset<Card>& get_cards_multiset ();
+	std::set<Card>& get_cards_set ();
 	int get_round_pts () const;
 	int get_total_pts () const;
 	bool points_set () const;
@@ -100,7 +100,7 @@ public:
 	void set_current_group (struct card_st *c, game_type_t type, int length);
 	void set_combo_type (int n, game_type_t type);
 	void set_combo_length (int n, int length);
-	void set_combo_card (int n, struct card_st *card);
+	void set_combo_card (int n, struct card_st *card, bool replace);
 	void set_round_pts (int round_pts);
 	void set_total_pts (int total_pts);
 	void set_points (bool are_points_set);
@@ -125,7 +125,7 @@ private:
 	int id;
 	std::string name;
 	std::list<Card> cards;
-	std::multiset<Card> cards_multiset;
+	std::set<Card> cards_set;
 	game_combo_t game_combo[2];
 	int current_group;
 	double sep;
@@ -152,9 +152,10 @@ extern unsigned deck_dist_tid, play_card_tid, player_ending_round_tid;
 
 bool card_st::operator< (struct card_st& c)
 {
-	if (this->cnt < c.cnt)
-		return false;
-	return true;
+//	if (this->cnt < c.cnt)
+	if (this->number < c.number)
+		return true;
+	return false;
 }
 
 /*
@@ -259,36 +260,51 @@ int Player::get_selected () const
 	return selected;
 }
 
-/*
- * There's something wrong on this algorithm but I didn't realize what it
- * is so far. You are going to see how bots end rounds playing cards
- * which belong  to one or another combo, breaking the main rule of the
- * game. If you'd like to get involved, please send me patches or create
- * a pull request
- */
 int Player::get_ncard_to_play ()
 {
-	int i, j;
+	int i;
 	card_st c = { 0 };
 	std::list<struct card_st> cnt;
 	std::list<struct card_st>::iterator cnt_iter, cnt_next;
 	std::list<Card>::iterator iter;
-	std::multiset<Card>::iterator pos;
+	std::set<Card>::iterator pos;
+	bool gc0 = false, gc1 = false;
 
-	cards_multiset.clear ();
-	for (iter = cards.begin (); iter != cards.end (); iter++)
-		for (i = 0; i < 2; i++)
-			if (game_combo[i].length > 2)
-				for (j = 0; j < game_combo[i].length; j++)
-					if (iter->get_suit () != game_combo[i].cards[j].suit &&
-					    iter->get_number () != game_combo[i].cards[j].number)
-						cards_multiset.insert (*iter);
+	cards_set.clear ();
+	for (iter = cards.begin (); iter != cards.end (); iter++) {
+		for (i = 0; i < game_combo[0].length; i++) {
+			if (iter->get_suit () != game_combo[0].cards[i].suit &&
+			    iter->get_number () != game_combo[0].cards[i].number) {
+				gc0 = true;
+				break;
+			} else {
+				gc0 = false;
+			}
+		}
 
-	for (pos = cards_multiset.begin (); pos != cards_multiset.end (); pos++) {
+		for (i = 0; i < game_combo[1].length; i++) {
+			if (iter->get_suit () != game_combo[1].cards[i].suit &&
+			    iter->get_number () != game_combo[1].cards[i].number) {
+				gc1 = true;
+				break;
+			} else {
+				gc1 = false;
+			}
+		}
+
+		if (gc0 && gc1) {
+			cards_set.insert (*iter);
+			gc0 = false;
+			gc1 = false;
+		}
+	}
+
+	for (pos = cards_set.begin (); pos != cards_set.end (); pos++) {
 		c.suit = pos->get_suit ();
 		c.number = pos->get_number ();
+		std::cout << __FUNCTION__ << " (not making combos): suit = " << c.suit << ", number = " << c.number << std::endl;
 		c.idx = get_idx (c.suit, c.number);
-		c.cnt = cards_multiset.count (*pos);
+		c.cnt = cards_set.count (*pos);
 		cnt.push_back (c);
 	}
 
@@ -300,7 +316,7 @@ int Player::get_ncard_to_play ()
 			return cnt_iter->idx;
 	}
 
-	return -1;
+	return 7;
 }
 
 bool Player::has_extra_card () const
@@ -338,9 +354,9 @@ game_combo_t *Player::get_game_combo (int ngroup)
 	return &game_combo[ngroup];
 }
 
-std::multiset<Card>& Player::get_cards_multiset ()
+std::set<Card>& Player::get_cards_set ()
 {
-	return cards_multiset;
+	return cards_set;
 }
 
 int Player::get_round_pts () const
@@ -420,8 +436,7 @@ void Player::set_locked (bool locked)
 
 void Player::set_current_group (struct card_st *c, game_type_t type, int length)
 {
-	int i;
-	bool found = false;
+	bool has_sub_stair = false;
 
 	if (type == TYPE_EMPTY) {
 		if (game_combo[0].length == 0)
@@ -429,16 +444,20 @@ void Player::set_current_group (struct card_st *c, game_type_t type, int length)
 		else
 			current_group = 1;
 	} else if (type == TYPE_STAIR) {
-		for (i = 0; i < length; i++) {
-			if ((game_combo[0].cards[i].number + 1 == c->number && !found) ||
-			    (game_combo[0].cards[i].number == -1)) {
-				current_group = 0;
-				found = true;
+		for (int i = 0; i < game_combo[0].length; i++) {
+			if ((game_combo[0].cards[i].suit == c->suit &&
+			     game_combo[0].cards[i].number < c->number) ||
+			    game_combo[0].cards[i].number != -1) {
+				has_sub_stair = true;
+			} else {
+				has_sub_stair = false;
 				break;
 			}
 		}
 
-		if (!found)
+		if ((game_combo[0].cards[0].suit == c->suit || game_combo[0].cards[0].suit == -1) && !has_sub_stair)
+			current_group = 0;
+		else
 			current_group = 1;
 	} else {
 		if (game_combo[0].cards[0].number == c->number || game_combo[0].cards[0].number == -1)
@@ -458,20 +477,26 @@ void Player::set_combo_length (int n, int length)
 	this->game_combo[n].length = length;
 }
 
-void Player::set_combo_card (int n, struct card_st *card)
+void Player::set_combo_card (int n, struct card_st *card, bool replace)
 {
-	int idx;
-
-	for (idx = 0; idx < game_combo[n].length; idx++)
-		if (game_combo[n].cards[idx].suit == -1 &&
-		    game_combo[n].cards[idx].number == -1)
-			break;
-
 	if (game_combo[n].type == TYPE_GROUP) {
-		game_combo[n].cards[idx].idx = -1;
-		game_combo[n].cards[idx].suit = card->suit;
-		game_combo[n].cards[idx].number = card->number;
-		game_combo[n].cards[idx].cnt = card->cnt;
+		if (replace) {
+			game_combo[n].cards[card->idx].idx = card->idx;
+			game_combo[n].cards[card->idx].suit = card->suit;
+			game_combo[n].cards[card->idx].number = card->number;
+			game_combo[n].cards[card->idx].cnt = card->cnt;
+			return;
+		}
+
+		for (int i = 0; i < 4; i++) {
+			if (game_combo[n].cards[i].idx == -1) {
+				game_combo[n].cards[i].idx = card->idx;
+				game_combo[n].cards[i].suit = card->suit;
+				game_combo[n].cards[i].number = card->number;
+				game_combo[n].cards[i].cnt = card->cnt;
+				break;
+			}
+		}
 	} else {
 		game_combo[n].cards[card->idx].idx = card->idx;
 		game_combo[n].cards[card->idx].suit = card->suit;
@@ -575,8 +600,6 @@ void Player::conf ()
 
 void Player::clear (int ncombo)
 {
-//	current_group = 0;
-
 	game_combo[ncombo].type = TYPE_EMPTY;
 	game_combo[ncombo].length = 0;
 	for (int j = 0; j < 8; j++) {
