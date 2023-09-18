@@ -152,6 +152,7 @@ void UserInterface::display_table_of_scores ()
 	builder = gtk_builder_new_from_resource ("/org/gtk/chin-chon-lin/scores.ui");
 	g_resources_unregister (res);
 	dialog = gtk_builder_get_object (builder, "scores-dialog");
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
 
 	for (int i = 0; i < 4; i++) {
 		name << player[i].get_name ();

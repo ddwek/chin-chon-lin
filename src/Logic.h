@@ -53,7 +53,7 @@ public:
 
 	std::set<struct card_st> determine_missing_cards (int nplayer);
 	int choose_source ();
-	void get_sub_stair (stair_t *stair, int *io_start, int *ret_length);
+	bool get_sub_stair (stair_t *stair, int *io_start, int *ret_length);
 	bool check_extra_cards_for_stair (stair_t *stair, int *last, int n_extra, int start);
 	void get_next_end_for_stair (stair_t *stair, int suit, int *end1, int *end2);
 	int get_distance_for_stair (int suit, int end1, int end2, int *last, bool reset);

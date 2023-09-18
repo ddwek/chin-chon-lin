@@ -1,10 +1,21 @@
+2023-09-18  Daniel Dwek  <dwekdaniel@gmail.com>
+
+	0.3.0 Release
+	* Added multiple test units under test/ subdir in order to ensure
+	  right working of combos making for bots.
+
+	* Inhibit secondary mouse button for human player iff it is pressed
+	  for ending the current round but this player does not have one combo
+	  of four cards and the another one of three cards (or vice versa), or
+	  a big stairway (seven cards). Rules are rules, for everyone!
+
 2023-07-24  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
 	(EXTRA_DIST): New variable.
 	* configure.ac (AC_CONFIG_FILES): Add po/Makefile.in.
 
-2023-07-12  Daniel Dwek  <todovirtual15@gmail.com>
+2023-07-12  Daniel Dwek  <dwekdaniel@gmail.com>
 
 	0.1.0 Release
 	* Initial release

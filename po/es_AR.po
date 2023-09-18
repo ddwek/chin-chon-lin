@@ -1,16 +1,16 @@
 # Traducción al español castellano de chin-chon-lin.
 # Copyright (C) 2023 Free Software Foundation, Inc.
 # This file is distributed under the same license as the chin-chon-lin package.
-# Daniel Dwek <todovirtual15@gmail.com>, 2023.
+# Daniel Dwek <dwekdaniel@gmail.com>, 2023.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: chin-chon-lin 0.2.0\n"
-"Report-Msgid-Bugs-To: todovirtual15@gmail.com\n"
+"Report-Msgid-Bugs-To: dwekdaniel@gmail.com\n"
 "POT-Creation-Date: 2023-07-28 09:40-0300\n"
 "PO-Revision-Date: 2023-07-28 09:51-0300\n"
-"Last-Translator: Daniel Dwek <todovirtual15@gmail.com>\n"
+"Last-Translator: Daniel Dwek <dwekdaniel@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es_AR\n"
 "MIME-Version: 1.0\n"

@@ -123,6 +123,8 @@ gint draw_cb (GtkWidget *widget, cairo_t *cr, gpointer data)
 		board.set_framerate (10.0);
 		if (board.get_turn () != 0) {
 			if (is_selected == false) {
+				logic.get_game_combos ();
+				logic.rearrange_common_cards ();
 				ncard = p.get_ncard_to_play ();
 				p.set_selected (ncard & 7);
 				is_selected = true;
@@ -140,7 +142,7 @@ gint draw_cb (GtkWidget *widget, cairo_t *cr, gpointer data)
 			player_ending_round_tid = gtk_widget_add_tick_callback (GTK_WIDGET (drawing_area), on_player_ending_round_cb, NULL, NULL);
 			if (board.get_turn () != 0) {
 				ncard = p.get_ncard_to_play ();
-				p.set_selected (ncard /* & 7*/);
+				p.set_selected (ncard);
 			}
 			set_player = true;
 		}
@@ -151,6 +153,7 @@ gint draw_cb (GtkWidget *widget, cairo_t *cr, gpointer data)
 		if (board.get_turn () == 0) {
 			board.set_status (IDLE);
 		} else {
+			logic.get_game_combos ();
 			if (logic.choose_source ()) {
 				board.set_status (DECK_TO_PLAYER_START);
 				deck_to_player_tid = gtk_widget_add_tick_callback (GTK_WIDGET (drawing_area), on_deck_to_player_cb, NULL, NULL);
@@ -282,6 +285,8 @@ int configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer da
 
 bool button_press_event_cb (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
+	Player& p = player[0];
+
 	if (event->type == GDK_BUTTON_PRESS) {
 		if (event->button == GDK_BUTTON_PRIMARY) {
 			ui.foreach (board.get_cr (), event->x, event->y);
@@ -292,10 +297,21 @@ bool button_press_event_cb (GtkWidget *widget, GdkEventButton *event, gpointer d
 						if (event->type == GDK_BUTTON_RELEASE)
 							return false;
 		} else if (event->button == GDK_BUTTON_SECONDARY) {
-			if (board.get_status () == FINISHING_ROUND_START)
+			if (board.get_status () == FINISHING_ROUND_START) {
 				return false;
-			board.set_status (FINISHING_ROUND_START);
-			gtk_widget_queue_draw (GTK_WIDGET (drawing_area));
+			} else if (p.get_cards().size() == 7) {
+				return false;
+			} else if (logic.get_flexible_ending () == true) {
+				board.set_status (FINISHING_ROUND_START);
+				gtk_widget_queue_draw (GTK_WIDGET (drawing_area));
+			} else {
+				if ((p.get_combo_length (0) == 3 && p.get_combo_length (1) == 4) ||
+				    (p.get_combo_length (0) == 4 && p.get_combo_length (1) == 3) ||
+				    (p.get_combo_length (0) == 7)) {
+					board.set_status (FINISHING_ROUND_START);
+					gtk_widget_queue_draw (GTK_WIDGET (drawing_area));
+				}
+			}
 		}
 	}
 

@@ -1,4 +1,4 @@
-AC_INIT([chin-chon-lin], [0.2.0], [todovirtual15@gmail.com])
+AC_INIT([chin-chon-lin], [0.3.0], [dwekdaniel@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_PROG_CXX
 AC_CHECK_PROG(GLIB_COMPILE_RESOURCES, 'glib-compile-resources', "yes", "no")

@@ -4,8 +4,9 @@ display *cnt_iter
 display *cnt_next
 display *iter
 display pos
-display cards_multiset 
 display i
-display j
 display game_combo[0]
 display game_combo[1]
+display cards_set
+display gc0
+display gc1

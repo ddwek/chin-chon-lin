@@ -1,7 +1,7 @@
-display *group_card
-display *stair_card
-display *g_combo
-display new_card
+display p.game_combos[0]
+display p.game_combos[1]
 display i
 display j
 display n
+display new_card
+display *g_combo
